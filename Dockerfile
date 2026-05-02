@@ -7,4 +7,4 @@ RUN chmod +x /start.sh
 
 EXPOSE 18188 8889
 
-CMD ["/start.sh"]
+CMD ["bash", "-lc", "/start.sh"]
