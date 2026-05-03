@@ -1,4 +1,4 @@
-FROM krist1k/comfy:v0.14.2-cuda-12.9-py312
+FROM flyttg/comfy-base:latest
 
 RUN /venv/main/bin/python -m pip install jupyterlab notebook
 
