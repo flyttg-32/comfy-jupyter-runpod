@@ -1,8 +1,0 @@
-FROM ghcr.io/flyttg-32/comfy-jupyter:v1.0.0
-
-RUN mkdir -p /workspace/logs
-
-COPY supervisor/comfyui.conf /etc/supervisor/conf.d/comfyui.conf
-COPY supervisor/jupyter.conf /etc/supervisor/conf.d/jupyter.conf
-
-EXPOSE 18188 8889
