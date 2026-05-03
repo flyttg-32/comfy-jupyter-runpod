@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   docker:
@@ -22,9 +27,20 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
-          tags: flyttg/comfy-jupyter:latest
+          tags: |
+            flyttg/comfy-jupyter:latest
+            flyttg/comfy-jupyter:v1
+            ghcr.io/flyttg-32/comfy-jupyter:latest
+            ghcr.io/flyttg-32/comfy-jupyter:v1
