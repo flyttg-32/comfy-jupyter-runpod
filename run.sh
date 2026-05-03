@@ -1,7 +1,5 @@
 #!/bin/bash
 
-export PORTAL_CONFIG="localhost:18188:18188:/:ComfyUI|localhost:8889:8889:/:Jupyter"
-
 set -e
 source /venv/main/bin/activate
 
@@ -166,3 +164,25 @@ fi
 
 echo "Script done!"
 cd "${COMFYUI_DIR}"
+
+echo "Fixing ComfyUI supervisor startup..."
+
+cat > /etc/supervisor/conf.d/comfyui.conf <<'EOF'
+[program:comfyui]
+command=/bin/bash -lc 'cd /workspace/ComfyUI && /venv/main/bin/python main.py --listen 0.0.0.0 --port 18188'
+autostart=true
+autorestart=true
+startsecs=5
+stdout_logfile=/workspace/comfyui.log
+stderr_logfile=/workspace/comfyui.err.log
+stdout_logfile_maxbytes=20MB
+stderr_logfile_maxbytes=20MB
+EOF
+
+rm -f /.provisioning
+
+supervisorctl reread || true
+supervisorctl update || true
+supervisorctl restart comfyui || supervisorctl start comfyui || true
+
+echo "ComfyUI supervisor fix applied."
