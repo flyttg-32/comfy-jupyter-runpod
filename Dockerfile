@@ -1,4 +1,4 @@
-FROM flyttg/comfy-base:latest
+FROM flyttg/comfy-base:v0.14.2
 
 RUN /venv/main/bin/python -m pip install jupyterlab notebook
 
