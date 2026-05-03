@@ -44,3 +44,6 @@ jobs:
             flyttg/comfy-jupyter:v1
             ghcr.io/flyttg-32/comfy-jupyter:latest
             ghcr.io/flyttg-32/comfy-jupyter:v1
+           
+            ghcr.io/flyttg-32/comfy-jupyter:v1.0.0
+            ghcr.io/flyttg-32/comfy-jupyter:stable
