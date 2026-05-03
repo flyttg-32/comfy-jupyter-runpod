@@ -1,4 +1,17 @@
 #!/bin/bash
+
+cat > /etc/portal.yaml <<'EOF'
+services:
+  - name: ComfyUI
+    port: 18188
+    proxy_port: 18188
+    proxy_scheme: http
+  - name: Jupyter
+    port: 8889
+    proxy_port: 8889
+    proxy_scheme: http
+EOF
+
 set -e
 source /venv/main/bin/activate
 
