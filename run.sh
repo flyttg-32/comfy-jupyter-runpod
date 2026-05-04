@@ -1,5 +1,7 @@
 #!/bin/bash
 
+mkdir -p /workspace/logs
+
 set -e
 source /venv/main/bin/activate
 
