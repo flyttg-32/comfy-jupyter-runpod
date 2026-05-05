@@ -89,10 +89,15 @@ function provisioning_start() {
 }
 
 function provisioning_clone_comfyui() {
-    if [[ ! -d "${COMFYUI_DIR}" ]]; then
+    COMFY_COMMIT="1ac78180b3f797f09f5805e5a923debe77638889"
+
+    if [[ ! -d "${COMFYUI_DIR}/.git" ]]; then
         git clone https://github.com/comfyanonymous/ComfyUI.git "${COMFYUI_DIR}"
     fi
+
     cd "${COMFYUI_DIR}"
+    git fetch --all
+    git checkout "${COMFY_COMMIT}"
 }
 
 function provisioning_install_base_reqs() {
@@ -117,22 +122,32 @@ function provisioning_get_nodes() {
     mkdir -p "${COMFYUI_DIR}/custom_nodes"
     cd "${COMFYUI_DIR}/custom_nodes"
 
+    KJ_COMMIT="33ea05cbbf3c755dfd24eb18726b84c4147643fb"
+
     for repo in "${NODES[@]}"; do
         dir="${repo##*/}"
+        dir="${dir%.git}"
         path="./${dir}"
 
-        if [[ -d "$path" ]]; then
-            echo "Updating node: $dir"
-            (cd "$path" && git pull --ff-only 2>/dev/null || { git fetch && git reset --hard origin/main; })
+        if [[ -d "$path/.git" ]]; then
+            echo "Node already exists: $dir"
         else
             echo "Cloning node: $dir"
             git clone "$repo" "$path" --recursive || echo " [!] Clone failed: $repo"
         fi
 
+        if [[ "$dir" == "ComfyUI-KJNodes" ]]; then
+            echo "Pinning ComfyUI-KJNodes to ${KJ_COMMIT}"
+            cd "$path"
+            git fetch --all
+            git checkout "${KJ_COMMIT}"
+            cd "${COMFYUI_DIR}/custom_nodes"
+        fi
+
         requirements="${path}/requirements.txt"
         if [[ -f "$requirements" ]]; then
             echo "Installing deps for $dir..."
-            pip install --no-cache-dir -r "$requirements" || echo " [!] pip requirements failed for $dir"
+            pip install --no-cache-dir -r "$requirements" --root-user-action=ignore || echo " [!] pip requirements failed for $dir"
         fi
     done
 }
